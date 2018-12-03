@@ -9,18 +9,6 @@ export class RpsService {
 
   constructor(private socket: Socket) { }
 
-  getMessages = () => {
-    let observable = new Observable(observer => {
-      this.socket.on('message', (data) => {
-        observer.next(data);
-      });
-      return () => {
-        this.socket.disconnect();
-      };
-    })
-    return observable;
-  }
-
   emitMessage = (message) => {
     this.socket.emit('sendMessage', message)
   }
@@ -32,6 +20,18 @@ export class RpsService {
   emitNickname = (nickname) => {
     console.log(nickname);
     this.socket.emit('nickname', nickname);
+  }
+
+  getMessages = () => {
+    let observable = new Observable(observer => {
+      this.socket.on('message', (data) => {
+        observer.next(data);
+      });
+      return () => {
+        this.socket.disconnect();
+      };
+    })
+    return observable;
   }
 
   getConnectionStatus = () => {
@@ -61,6 +61,19 @@ export class RpsService {
   getScore = () => {
     let observable = new Observable(observer => {
       this.socket.on('score', (data) => {
+        observer.next(data);
+      });
+      return () => {
+        this.socket.disconnect();
+      };
+    })
+    return observable;
+  }
+
+  getTimerReset = () => {
+    let observable = new Observable(observer => {
+      this.socket.on('timerReset', (data) => {
+        console.log(data);
         observer.next(data);
       });
       return () => {

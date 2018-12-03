@@ -49,13 +49,22 @@ export class PrsComponent implements OnInit {
     this.rpsService.getConnectionStatus().subscribe(status => {
       if (status) {
         this.rpsService.emitNickname(nicknamePlayer);
+        this.runTimer();
       }
     })
-    this.runTimer();
+    this.rpsService.getTimerReset().subscribe(TRbool => {
+      if(TRbool){
+        this.resetTimer();
+      }
+    })
+  }
+
+  resetTimer = () => {
+    this.counter = 20;
   }
 
   runTimer = () => {
-    this.counter = 10;
+    this.counter = 20;
     let interval = setInterval( () => {
       this.counter--;
       if (this.counter == 0) {

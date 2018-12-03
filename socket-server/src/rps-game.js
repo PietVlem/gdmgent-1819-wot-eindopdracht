@@ -4,19 +4,24 @@ class RpsGame {
         this.p1 = p1;
         this.p2 = p2;
 
+        this.scoreP1 = 0;
+        this.scoreP2 = 0;
+
+        this.counter;
+        this.maxCounterTime = 20;
+
+        this.gameOver = false;
+
         this.players = [p1, p2];
         this.nicknames = [null, null];
         this.turns = [null, null];
 
-        this.scoreP1 = 0;
-        this.scoreP2 = 0;
-
-        this.players.forEach( player => {
+        this.players.forEach(player => {
             player.emit('connectionSatus', true)
         });
 
         this.sendToPlayers('Tegenstander gevonden! (BO3 : Eerste die 2 punten heeft wint!)');
-        this.updateScore(0, 0);
+        this.updateScore();
 
         this.players.forEach((player, idx) => {
             player.on('nickname', (nickname) => {
@@ -29,11 +34,60 @@ class RpsGame {
                 this.onTurn(idx, turn);
             });
         });
+
+        this.runTimer();
     }
 
     getTime() {
         let date = new Date();
         return `${date.getHours()}h ${date.getMinutes()}`;
+    }
+
+    runTimer() {
+        this.counter = this.maxCounterTime;
+        let interval = setInterval(() => {
+            console.log(this.counter);
+            if(this.turns.includes(null)){
+                this.counter--;
+                console.log(this.counter);
+                if (this.counter == 0) {
+                    let nullValues = this.getOccurrence(this.turns, null);
+                    if(nullValues == 2){
+                        this.sendToPlayers('Gelijkspel!');
+                    }else{
+                        if(this.turns.indexOf(null) == 0){
+                            this.sendWinMessage(this.players[1], this.players[0]);
+                            this.scoreP1 += 1;
+                        }else{
+                            this.sendWinMessage(this.players[0], this.players[1]);
+                            this.scoreP2 += 1;
+                        }
+                        this.updateScore();
+                    }
+                    console.log(`nullValues: ${nullValues}`);
+                    if(this.scoreP1 == 2 || this.scoreP2 == 2){
+                        clearInterval(interval);
+                    }
+                    else{
+                        this.timerReset();
+                    }
+                    
+                }
+            }else{
+                this.timerReset();
+            }
+        }, 1000);
+    }
+
+    getOccurrence(array, value) {
+        return array.filter((v) => (v === value)).length;
+    }
+
+    timerReset(){
+        this.counter = this.maxCounterTime;
+        this.players.forEach((player) => {
+            player.emit('timerReset', true);
+        });
     }
 
     sendToPlayer(playerIndex, msg) {
@@ -58,7 +112,7 @@ class RpsGame {
         this.checkGameOver();
     }
 
-    setNickname(playerIndex, nickname){
+    setNickname(playerIndex, nickname) {
         this.nicknames[playerIndex] = nickname;
         this.updateNickname(this.nicknames[0], this.nicknames[1])
     }
@@ -69,6 +123,7 @@ class RpsGame {
         if (turns[0] && turns[1]) {
             this.sendToPlayers('Game over ' + turns.join(' : '));
             this.getGameResult();
+            this.timerReset();
             this.turns = [null, null];
             this.sendToPlayers('Volgende ronde!');
         }
@@ -99,16 +154,16 @@ class RpsGame {
     }
 
     sendWinMessage(winner, loser) {
-        winner.emit('message',{
-            'message': 'jij wint!',
+        winner.emit('message', {
+            'message': 'jij wint! ( +1 point )',
             'timestamp': this.getTime()
         });
-        loser.emit('message',{
+        loser.emit('message', {
             'message': 'jij verliest.',
             'timestamp': this.getTime()
         });
 
-        this.updateScore(this.scoreP1, this.scoreP2)
+        this.updateScore();
         this.checkWinner();
     }
 
@@ -134,7 +189,7 @@ class RpsGame {
         }
     }
 
-    updateNickname(nickname1, nickname2){
+    updateNickname(nickname1, nickname2) {
         this.players.forEach((player) => {
             player.emit('nicknames', {
                 'p1': nickname1,
@@ -143,11 +198,11 @@ class RpsGame {
         })
     }
 
-    updateScore(score1, score2) {
+    updateScore() {
         this.players.forEach((player) => {
             player.emit('score', {
-                'p1': score1,
-                'p2': score2
+                'p1': this.scoreP1,
+                'p2': this.scoreP2
             });
         })
     }
