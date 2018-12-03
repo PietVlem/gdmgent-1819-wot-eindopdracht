@@ -1,0 +1,296 @@
+/*============================================================================
+  FORMS
+==============================================================================*/
+
+form {
+    margin: 0;
+}
+
+legend {
+    border: 0;
+    padding: 0;
+    white-space: normal;
+    *margin-left: -7px;
+    font-size: 18px;
+}
+
+button, input, select, textarea, .button {
+    margin: 0;
+    vertical-align: baseline;
+    *vertical-align: middle;
+    transition: $transitionDefault;
+}
+
+button, input {
+    line-height: normal;
+}
+
+button, select {
+    text-transform: none;
+}
+
+.button--default {
+    background-color: $accent;
+    border-radius: 0.25rem;
+    padding: 16px;
+    padding: 1rem;
+    font-weight: 600;
+    fa-icon{
+      padding-left: 8px;
+    }
+}
+
+.button--full {
+    width: 100%;
+}
+
+// When having a body font-size < 16px
+// Prevent zoom on touch devices in active inputs
+// @media #{$maxMedium} {
+//   input, textarea {
+//     font-size: 16px;
+//   }
+// }
+
+label, .label, input, select, textarea {
+    @include default-font;
+
+    vertical-align: middle;
+    color: $black;
+}
+
+label, .label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+button, input[type="button"], input[type="reset"], input[type="submit"] {
+    -webkit-appearance: button;
+    cursor: pointer;
+    *overflow: visible;
+    border: none;
+}
+
+input[type="checkbox"], input[type="radio"] {
+    cursor: pointer;
+}
+
+input[type="text"], input[type="search"], input[type="password"],
+input[type="email"], input[type="tel"], input[type="date"], textarea, select {
+    display: block;
+    height: 40px;
+    line-height: inherit;
+    width: 100%;
+    background-color: $bgColorLight;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    border: none;
+    color: white;
+
+    &:focus {
+        outline: 0;
+        border-color: $grayDark;
+    }
+}
+
+input[type="email"] {
+    display: block;
+}
+
+textarea {
+    overflow: auto;
+    vertical-align: top;
+    resize: vertical;
+    width: 100%;
+    height: 185px;
+}
+
+button::-moz-focus-inner, input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+input[type="checkbox"], input[type="radio"] {
+    box-sizing: border-box;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 3px 0;
+    *margin-top: 0;
+    *height: 13px;
+    *width: 13px;
+    line-height: normal;
+    border: none;
+}
+
+input[type="file"] {
+    background-color: #fff;
+    padding: initial;
+    border: initial;
+    line-height: initial;
+}
+
+input[type="search"] {
+    -webkit-appearance: textfield;
+    box-sizing: content-box;
+}
+
+// Buttons
+button, input[type="reset"], input[type="submit"], .button {
+    display: block;
+    transition: $transitionDefault;
+    outline: 0;
+    line-height: 1.2em;
+    padding: 12px 20px;
+    background-color: $accent;
+    text-decoration: none;
+    color: #fff;
+    text-transform: uppercase;
+
+    i {
+        margin: -5px 6px 0 5px;
+    }
+
+    &:hover, &:focus, &:active {
+        background-color: $accentHover;
+    }
+
+    &:active {
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+        transform: translateY(1px);
+    }
+
+    &::-moz-focus-inner {
+        border: 0;
+    }
+}
+
+button, input[type="text"], input[type="submit"], input[type="button"], input[type="reset"],
+input[type="email"], input[type="tel"], textarea {
+    -webkit-appearance: none;
+}
+
+button, input[type="reset"], input[type="submit"], .button, a.button, select {
+    &:focus {
+        outline: 0;
+        *outline: inherit;
+        box-shadow: 0 0 1px 1px rgba(200, 200, 200, 0.1);
+    }
+}
+
+::placeholder {
+    color: $formDetails;
+    font-style: italic;
+}
+
+// Hide clear text field ie 10+
+::-ms-clear {
+    display: none;
+}
+
+// Remove the rounded corners
+input[type="search"] {
+    -webkit-appearance: none;
+}
+
+// Hide the cancel button
+::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+}
+
+// Hide the magnifying glass
+::-webkit-search-results-button {
+    -webkit-appearance: none;
+}
+
+::-webkit-textfield-decoration-container {}
+
+// Hide number input spinner
+::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+}
+
+// Style file upload button
+::-ms-browse, ::-webkit-file-upload-button {}
+
+// Forms
+form {
+    .row {
+        margin-bottom: 0;
+    }
+}
+
+fieldset {
+    width: auto;
+
+    p, ul, li {
+        @include clearfix;
+    }
+
+    ul {
+        margin-left: -20px;
+
+        li {
+            list-style: none;
+            background: none;
+            list-style-image: none;
+            margin: 0 0 10px;
+            float: left;
+            width: 100%;
+            padding: 0 0 0 20px;
+
+            &.error {
+                input {
+                    border-color: $error;
+                }
+            }
+
+            &.space {
+                margin-top: 25px;
+            }
+
+            @media #{$medium} {
+                &.one-half {
+                    width: 50%;
+                }
+
+                &.one-fourth {
+                    width: 25%;
+                }
+            }
+        }
+    }
+}
+
+.buttons {
+    @include clearfix;
+
+    button, input[type="reset"], input[type="submit"], .button, a.button {
+        float: left;
+        clear: none;
+        margin-right: 15px;
+
+        &.right {
+            float: right;
+            margin-right: 0;
+            margin-left: 15px;
+        }
+    }
+}
+
+.a-c {
+    .button, a.button, button {
+        float: none;
+        clear: none;
+        display: inline-block;
+    }
+}
+
+// Recaptcha
+.grecaptcha-badge {
+    display: none;
+}

@@ -1,0 +1,17 @@
+<div class="container">
+  <div class="home-wrapper">
+    <div class="grid">
+      <div class="grid__item">
+        <form class="form form--nickname" action="">
+          <label for="nickname">
+            <fa-icon [icon]="faUser"></fa-icon>
+          </label>
+          <input [(ngModel)]="nicknameVal" name="nickname" id="nickname" placeholder="Nickname" type="text">
+          <button (click)="play(nicknameVal)" class="button button--default button--full">
+            Speel<fa-icon [icon]="faLongArrowAltRight"></fa-icon>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

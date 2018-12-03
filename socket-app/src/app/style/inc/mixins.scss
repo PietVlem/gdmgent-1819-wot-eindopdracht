@@ -1,0 +1,290 @@
+
+/*============================================================================
+  MIXINS
+==============================================================================*/
+
+// Micro clearfix hack for clearing floats - h5bp.com/q
+@mixin clearfix {
+  *zoom: 1;
+  &:before, &:after {
+    display: table;
+    content: " ";
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+.clearfix {
+  @include clearfix;
+}
+
+// Image replacement
+.ir {
+  display: block;
+  border: 0;
+  text-indent: -999em;
+  overflow: hidden;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  text-align: left;
+  direction: ltr;
+}
+
+// Hide from both screenreaders and browsers: h5bp.com/u
+.hidden {
+  display: none !important;
+  visibility: hidden;
+}
+
+// Hide only visually, but have it available for screenreaders: h5bp.com/v
+.vh {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+// Extends the .visuallyhidden class to allow the element to be focusable
+// when navigated to via the keyboard: h5bp.com/p
+.vh.focusable:active, .vh.focusable:focus {
+  clip: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  position: static;
+  width: auto;
+}
+
+// Hide visually and from screenreaders, but maintain layout
+.invisible {
+  visibility: hidden;
+}
+
+// Zoom
+@mixin zoom($ratio: 1) {
+  zoom: $ratio;
+  -moz-transform: scale($ratio);
+  -moz-transform-origin: 0 0;
+}
+
+// Placeholder
+@mixin placeholder($color: $grayLight) {
+  ::-webkit-input-placeholder {
+    color: $color;
+  }
+  ::-moz-placeholder {
+    color: $color;
+  }
+  :-moz-placeholder {
+    color: $color;
+  }
+  :-ms-input-placeholder {
+    color: $color;
+  }
+}
+
+// Text Overflow
+@mixin text-truncate {
+  text-overflow: ellipsis;
+  vertical-align: top;
+  white-space: nowrap;
+  overflow: hidden;
+  display: inline-block;
+}
+
+// GPU Rendering
+@mixin enable-webkit-gpu($perspective:1000) {
+  // Enable gpu rendering (ios hack)
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: $perspective;
+}
+
+// Opacity
+@mixin opacity($opacity: 100) {
+  opacity: $opacity / 100;
+  backface-visibility: hidden;
+}
+
+// Optimize font
+@mixin optimize-font($smoothing:antialiased) {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: $smoothing;
+  -moz-osx-font-smoothing: grayscale;
+  font-smoothing: $smoothing;
+}
+
+// Font size
+@mixin fs($size) {
+  font-size: 0px + $size;
+  font-size: 0rem + $size / $docFontSize;
+}
+
+// Line height
+@mixin lh($lh) {
+  line-height: 0px + $lh;
+  line-height: 0rem + $lh / $docFontSize;
+}
+
+// =========================================================================
+//
+//  PRECISE CONTROL OVER RESPONSIVE TYPOGRAPHY FOR SASS
+//  ---------------------------------------------------
+//  Indrek Paas @indrekpaas
+//
+//  Inspired by Mike Riethmuller's Precise control over responsive typography
+//  http://madebymike.com.au/writing/precise-control-responsive-typography/
+//
+//  `strip-unit()` function by Hugo Giraudel
+//
+//  Usage:
+//  @include fluid-type(font-size, $mediumSize, $largerSize, 18px, 45px);
+//  @include fluid-type(padding-bottom padding-top, $mediumSize, $largerSize, 2em, 4em);
+//
+// =========================================================================
+
+@mixin fluid-type($properties, $min-vw, $max-vw, $min-value, $max-value) {
+  @each $property in $properties {
+    #{$property}: $min-value;
+  }
+
+  @media screen and (min-width: $min-vw) {
+    @each $property in $properties {
+      #{$property}: calc(#{$min-value} + #{strip-unit($max-value - $min-value)} * (100vw - #{$min-vw}) / #{strip-unit($max-vw - $min-vw)});
+    }
+  }
+
+  @media screen and (min-width: $max-vw) {
+    @each $property in $properties {
+      #{$property}: $max-value;
+    }
+  }
+}
+
+@function strip-unit($value) {
+  @return $value / ($value * 0 + 1);
+}
+
+// Underline text
+@mixin smart-underline($background: #fff, $text: #000, $selection: $selection, $position: 95%, $width: 1px){
+	color: inherit;
+	text-decoration: none;
+	background:
+		linear-gradient($background, $background),
+		linear-gradient($background, $background),
+		linear-gradient($text, $text);
+	background-size: .05em $width, .05em $width, $width $width;
+	background-repeat: no-repeat, no-repeat, repeat-x;
+	text-shadow: 0.03em 0 $background, -0.03em 0 $background, 0 0.03em $background, 0 -0.03em $background, 0.06em 0 $background, -0.06em 0 $background, 0.09em 0 $background, -0.09em 0 $background, 0.12em 0 $background, -0.12em 0 $background, 0.15em 0 $background, -0.15em 0 $background;
+	background-position: 0 $position, 100% $position;
+
+	&::selection {
+		text-shadow: 0.03em 0 $selection, -0.03em 0 $selection, 0 0.03em $selection, 0 -0.03em $selection, 0.06em 0 $selection, -0.06em 0 $selection, 0.09em 0 $selection, -0.09em 0 $selection, 0.12em 0 $selection, -0.12em 0 $selection, 0.15em 0 $selection, -0.15em 0 $selection;
+		background: $selection;
+	}
+
+	&:before, &:after, *, *:before, *:after {
+		text-shadow: none;
+	}
+
+	&:visited{
+		color: inherit;
+	}
+}
+
+// Height
+@mixin h($h) {
+  height: 0px + $h;
+  height: 0rem + $h / $doc-font-size;
+}
+
+// Margin
+@mixin m($mt:0, $mr:0, $mb:0, $ml:0) {
+  margin: (0px + $mt) (0px + $mr) (0px + $mb) (0px + $ml);
+  margin: (0rem + $mt / $doc-font-size) (0rem + $mr / $doc-font-size) (0rem + $mb / $doc-font-size) (0rem + $ml / $doc-font-size);
+}
+
+@mixin mt($m) {
+  margin-top: 0px + $m;
+  margin-top: 0rem + $m / $doc-font-size;
+}
+
+@mixin mb($m) {
+  margin-bottom: 0px + $m;
+  margin-bottom: 0rem + $m / $doc-font-size;
+}
+
+// Retina
+// A helper mixin for applying high-resolution background images (http://www.retinajs.com)
+@mixin at2x($path, $at2x_path, $w: auto, $h: auto) {
+  background-image: url($path);
+  @media all and (-webkit-min-device-pixel-ratio: 1.5) {
+    background-image: url($at2x_path);
+    background-size: $w $h;
+  }
+}
+
+// Selection
+@mixin selection($background: $grayDark, $color: $white) {
+  ::-moz-selection {
+    background-color: $background;
+    color: $color;
+  }
+  ::selection {
+    background-color: $background;
+    color: $color;
+  }
+}
+
+@mixin column-break-inside-avoid {
+  -webkit-column-break-inside: avoid; // Chrome, Safari
+  page-break-inside: avoid; // Theoretically FF 20+
+  break-inside: avoid-column; // IE 11
+}
+
+// Triangle helper mixin
+// @param {Direction} $direction - Triangle direction, either `top`, `right`, `bottom` or `left`
+// @param {Color} $color [currentcolor] - Triangle color
+// @param {Length} $size [1em] - Triangle size
+@mixin triangle($direction, $color: currentcolor, $size: 1em) {
+  @if not index(top right bottom left, $direction) {
+    @error "Direction must be either `top`, `right`, `bottom` or `left`.";
+  }
+
+  width: 0;
+  height: 0;
+  content: '';
+  z-index: 2;
+  border-#{opposite-position($direction)}: ($size * 1.5) solid $color;
+
+  $perpendicular-borders: $size solid transparent;
+
+  @if $direction == top or $direction == bottom {
+    border-left:   $perpendicular-borders;
+    border-right:  $perpendicular-borders;
+  } @else if $direction == right or $direction == left {
+    border-bottom: $perpendicular-borders;
+    border-top:    $perpendicular-borders;
+  }
+}
+
+// Custom ordered list
+@mixin custom-ordered-list {
+  list-style: none;
+  counter-reset: list-counter;
+  margin-left: 0;
+
+  li {
+    &::before {
+      display: inline-block;
+      content: counter(list-counter, decimal-leading-zero) ".";
+      counter-increment: list-counter;
+      margin-right: 5px;
+    }
+  }
+}

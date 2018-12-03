@@ -1,0 +1,18 @@
+
+/*============================================================================
+  TABLES
+==============================================================================*/
+
+table {
+  width: 100%; padding: 0; border-collapse: separate; border-spacing: 0;
+  empty-cells: show; margin: 0 0 1.5em;
+
+  th, td {
+    padding: 11px 6px; text-align: left; vertical-align: middle;
+    border-bottom: 1px solid #ddd; line-height: 1.5em;
+  }
+
+  th {
+    font-weight: bold; border-bottom: 2px solid #ddd;
+  }
+}

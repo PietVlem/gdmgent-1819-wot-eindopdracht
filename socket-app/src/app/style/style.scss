@@ -1,0 +1,243 @@
+/**
+ * OVERVIEW
+ *
+ * IMPORTS
+ * reset, vars, mixins, core, plugins
+ *
+ * LAYOUT
+ * Helpers
+ * Header / Main / Footer
+ * Components
+ * Pages (page overrides)
+ *
+ * Hooks (IE, ...)
+ * Print
+ */
+
+/**
+ * GUIDELINES
+ * CLASSES
+ * Naming: BEM - http://getbem.com/
+ * Abbreviations: Emmet - http://docs.emmet.io/cheat-sheet/ | example: .va-m
+ *
+ * MEDIAQUERIES
+ * @media $small, $medium, $maxMedium, $large, $larger, $huge, $massive
+ */
+
+/* =============================================================================
+   IMPORTS
+   ========================================================================== */
+
+// CSS Reset
+@import "inc/reset";
+
+// Core
+@import "inc/vars";
+@import "inc/mixins";
+
+//@import "inc/animations";
+//@import "inc/custom-animations";
+
+// Styled patterns and elements
+@import "inc/grid";
+@import "inc/type";
+@import "inc/tables";
+@import "inc/forms";
+
+// Plugins
+
+/* =============================================================================
+   LAYOUT
+   ========================================================================== */
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    @include default-font;
+
+    color: $black;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.page-wrap {
+    position: relative;
+
+    @media #{$medium} {
+        min-height: 100vh;
+        z-index: 2;
+    }
+}
+
+.container {
+    background-color: $bgColor;
+    position: relative;
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 0 20px;
+
+    @media #{$large} {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+}
+
+/* =============================================================================
+   HELPERS
+   ========================================================================== */
+
+// Icons
+.icon {
+    display: inline-block;
+    vertical-align: middle;
+    transition: $transitionDefault;
+}
+
+// Equal height
+.equal-h {
+    display: flex;
+    overflow: hidden;
+    flex-wrap: wrap;
+
+    > * {
+        display: flex;
+    }
+
+    &:before, &:after {
+        display: none;
+    }
+}
+
+/* =============================================================================
+   HEADER
+   ========================================================================== */
+
+.page-header {
+    @include clearfix;
+
+    padding: 20px 0;
+}
+
+/* =============================================================================
+   MAIN
+   ========================================================================== */
+
+.main {
+    padding: 20px 0;
+
+    @media #{$medium} {
+        padding: 50px 0 150px;
+    }
+}
+
+/* =============================================================================
+   FOOTER
+   ========================================================================== */
+
+.page-footer {
+    position: relative;
+
+    .grid {
+        margin-bottom: 0;
+    }
+
+    @media #{$medium} {
+        height: 60px;
+        margin: -60px 0 0;
+        z-index: 5;
+    }
+}
+
+/* =============================================================================
+   COMPONENTS
+   ========================================================================== */
+
+/* =============================================================================
+   PAGES
+   ========================================================================== */
+
+/*
+Home
+*/
+.home-wrapper {
+    min-height: 100vh;
+    padding-top: 40px;
+
+    .grid {
+        max-width: 500px;
+        margin: auto;
+
+        .form--nickname {
+
+            label {
+                background-color: #363b41;
+                float: left;
+                padding: 9px 14px;
+                height: 40px;
+
+                fa-icon {
+                    color: $formDetails;
+                }
+            }
+
+            input#nickname {
+                width: calc(100% - 41px);
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+        }
+    }
+}
+
+/*
+RPS
+*/
+.rps-wrapper{
+    max-width: 800px;
+    margin: auto;
+    min-height: calc(100vh - 40px);
+}
+.head-game{
+    background-color: $accent;
+    margin: 20px 0;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    h1{
+        text-align: center;
+        line-height: 1;
+    }
+}
+.grid--buttons{
+    fa-icon {
+        padding-right: 8px;
+    }
+}
+.textbox-top{
+    background-color: $bgColorLight;
+    border-radius: 0.25rem;
+    padding: 1rem;
+}
+.chatbox{
+    background-color: $bgColorLight;
+    height: 400px;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    overflow-y: auto;
+    li{
+        color: $white;
+    }
+}
+.tag{
+    font-weight: 100;
+    font-size: 14px;
+}
+.data{
+    display: block;
+    color: #18a288;
+    font-weight: bold;
+    padding: 10px 0 0 20px;
+    font-size: 20px;
+}
+

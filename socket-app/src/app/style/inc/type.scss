@@ -1,0 +1,231 @@
+
+/*============================================================================
+  TYPOGRAPHY
+==============================================================================*/
+
+// import
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700');
+
+// Font Stacks
+@mixin default-font($size: 14, $weight: 400, $lineHeight: 1.5em) {
+  font-family: 'open sans', Helvetica, Arial, Verdana, sans-serif;
+  @include fs($size);
+  line-height: $lineHeight;
+  font-weight: $weight;
+}
+
+@mixin display-font() {
+  font-family: 'Museo Sans', Helvetica, Arial, Verdana, sans-serif;
+  font-weight: 500;
+}
+
+
+// Body
+
+p {
+  line-height: 1.5em;
+  margin-bottom: 1.5em;
+}
+
+strong {
+  font-weight: 600;
+  font-size: inherit;
+}
+
+em {
+  font-style: italic;
+  font-weight: inherit;
+}
+
+a {
+  font-weight: inherit; font-style: inherit;
+  color: $linkColor;
+  transition: $transitionDefault;
+  text-decoration: underline;
+  text-decoration-skip: ink;
+  // @include smart-underline; cross browser text-decoration skip
+
+  &:hover, &:focus {
+    color: $linkColorHover;
+  }
+
+  &:focus, &:active {
+    outline: 0;
+  }
+
+  &.tdn {
+    text-decoration: none;
+    &:hover, &:focus {
+      text-decoration: underline;
+    }
+  }
+}
+
+a[href^=tel]{
+  text-decoration:none;
+  &:hover, &:focus {
+    text-decoration: underline;
+  }
+}
+
+a:not([href]) {
+  color: $black; text-decoration: none;
+  &:hover, &:focus {
+  }
+}
+
+img {
+  max-width: 100%; height: auto; display: inline-block; vertical-align: middle;
+}
+
+span{
+  color: $white;
+}
+
+
+// Headings
+
+h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
+  @include default-font;
+  @include optimize-font;
+  color: $accent;
+  line-height: 1.2em;
+
+  a {
+    text-decoration: none;
+    outline: 0; font-weight: inherit;
+    color: $accent;
+
+    &:hover, &:focus {
+      color: $accentHover;
+    }
+  }
+}
+
+h1, .h1 {
+  @include fluid-type(font-size, $mediumSize, $largerSize, 16px, 18px);
+  color: $white;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+h2, .h2 {
+  @include fluid-type(font-size, $mediumSize, $largerSize, 20px, 24px);
+}
+
+h3, .h3 {
+  @include fluid-type(font-size, $mediumSize, $largeSize, 16px, 22px);
+}
+
+h4, .h4 {
+  @include fs(16);
+}
+
+h5, .h5 {  }
+
+h6, .h6 {  }
+
+
+// Lists
+
+ul, ol {
+
+  li {
+    line-height: 2em;
+    padding: 0;
+    list-style-type: none;
+  }
+}
+
+ul ul, ul ol, ol ol, ol ul {
+  margin-bottom: 0;
+}
+
+ul {
+  list-style: disc;
+
+  ul {
+    list-style: circle;
+  }
+
+  &.lined {
+    @extend .unstyled;
+    li {
+      border-bottom: 1px solid #E3E3E3; padding: 5px 0;
+
+      &:first-child {
+        padding-top: 0;
+      }
+
+      &:last-child {
+        padding-bottom: 0; border-bottom: none;
+      }
+    }
+  }
+}
+
+ol {
+  list-style: decimal;
+}
+
+.unstyled, nav ul {
+  margin: 0 0 1.5em; padding: 0; list-style: none;
+
+  ul {
+    list-style: none;
+  }
+
+  li {
+    list-style: none; list-style-image: none;
+    padding: 0; background: none;
+  }
+}
+
+nav ul {
+  @include clearfix;
+}
+
+dl {
+  margin: 0 0 1.5em;
+}
+
+dt, dd {
+  line-height: 1.5em;
+}
+
+dt {
+  font-weight: 600;
+}
+
+dd {
+  margin-bottom: 0.5em;
+}
+
+
+// Misc
+
+hr {
+  display: block; height: 1px;
+  border: 0; border-top: 1px solid $gray; margin: 50px 0;
+}
+
+blockquote {
+  line-height: inherit;
+  padding-left: 20px;
+  border-left: 1px solid $gray;
+  margin-bottom: 1.5em;
+  @include fs(20);
+  font-style: italic;
+
+  p {
+    margin-bottom: 0.5em;
+  }
+
+  cite {
+    @include fs(14);
+  }
+
+  @media #{$medium} {
+    padding-left: 40px;
+  }
+}

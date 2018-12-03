@@ -1,0 +1,71 @@
+<div class="container clearfix">
+  <div class="rps-wrapper">
+    <div class="head-game">
+      <h1>Blad - Steen - Schaar</h1>
+    </div>
+    <div class="grid">
+      <div class="grid__item medium--one-fifth">
+        <div class="textbox-top">
+          <span class="tag">Player 1:</span><br/>
+          <span class="data">{{nicknames[nicknames.length - 1].p1}}</span>
+        </div>
+      </div>
+      <div class="grid__item medium--one-fifth">
+        <div class="textbox-top">
+            <span class="tag">score:</span><br/>
+            <span class="data">{{scores[scores.length - 1].p1}}</span>
+        </div>
+      </div>
+      <div class="grid__item medium--one-fifth">
+        <div class="textbox-top">
+            <span class="tag">Player 2:</span><br/>
+            <span class="data">{{nicknames[nicknames.length - 1].p2}}</span>
+        </div>
+      </div>
+      <div class="grid__item medium--one-fifth">
+        <div class="textbox-top">
+            <span class="tag">score:</span><br/>
+            <span class="data">{{scores[scores.length - 1].p2}}</span>
+        </div>
+      </div>
+      <div class="grid__item medium--one-fifth">
+        <div class="textbox-top">
+            <span class="tag">Time left:</span><br/>
+            <span class="data">{{counter}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="grid__item">
+        <ul class="chatbox">
+          <li *ngFor="let message of messages">[ {{message.timestamp}} ] {{message.message}}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="grid__item medium--three-quarters">
+        <input type="text" ngModel name="newMessage" #newMessage="ngModel">
+      </div>
+      <div class="grid__item medium--one-quarter">
+        <button class="button button--default button--full" (click)="sendMessage(newMessage)">Verzend</button>
+      </div>
+    </div>
+    <div class="grid grid--buttons">
+      <div class="grid__item medium--one-third">
+        <button class="button button--default button--full" (click)="yourRpsChoice('paper')">
+          <fa-icon [icon]="faHandPaper"></fa-icon>Blad
+        </button>
+      </div>
+      <div class="grid__item medium--one-third">
+        <button class="button button--default button--full" (click)="yourRpsChoice('rock')">
+          <fa-icon [icon]="faHandRock"></fa-icon>Steen
+        </button>
+      </div>
+      <div class="grid__item medium--one-third">
+        <button class="button button--default button--full" (click)="yourRpsChoice('scissors')">
+          <fa-icon [icon]="faHandScissors"></fa-icon>Schaar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
