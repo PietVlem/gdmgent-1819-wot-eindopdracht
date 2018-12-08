@@ -241,3 +241,18 @@ RPS
     font-size: 20px;
 }
 
+/*
+Dialog
+*/
+.dialog-container{
+    h1{
+        color: $accent;
+        margin-bottom: 20px;
+    }
+    p{
+        margin-bottom: 40px;
+    }
+    button{
+        margin: auto;
+    }
+}

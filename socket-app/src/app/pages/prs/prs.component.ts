@@ -3,6 +3,8 @@ import { RpsService } from 'src/app/services/rps.service';
 import { Observable, timer } from 'rxjs';
 import { take, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material';
+import { DialogContentComponent } from '../../components/dialog-content/dialog-content.component';
 import { faHandRock, faHandPaper, faHandScissors } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -16,6 +18,7 @@ export class PrsComponent implements OnInit {
   nicknames = [];
 
   counter;
+  interval;
 
   /*
   icons 
@@ -24,11 +27,10 @@ export class PrsComponent implements OnInit {
   faHandPaper = faHandPaper;
   faHandScissors = faHandScissors;
 
-  constructor(private rpsService: RpsService, private router: Router) { }
+  constructor(private rpsService: RpsService, private router: Router, public dialog: MatDialog) { }
 
   ngOnInit() {
     let nicknamePlayer = localStorage.getItem('nickname');
-    console.log(nicknamePlayer);
     this.scores.push({
       'p1': null,
       'p2': null
@@ -57,18 +59,35 @@ export class PrsComponent implements OnInit {
         this.resetTimer();
       }
     })
+    this.rpsService.getTimerStop().subscribe(TSbool => {
+      console.log(TSbool);
+      if(TSbool){
+        this.stopTimer();
+      }
+    })
+    this.rpsService.getWinner().subscribe(winner => {
+      this.openDialog(winner);
+    })
+    this.rpsService.getDCMessage().subscribe(DCMessage => {
+      this.openDialog(DCMessage);
+    })
   }
 
   resetTimer = () => {
     this.counter = 20;
   }
 
+  stopTimer = () =>{
+    clearInterval(this.interval);
+    this.counter = 0;
+  }
+
   runTimer = () => {
     this.counter = 20;
-    let interval = setInterval( () => {
+    this.interval = setInterval( () => {
       this.counter--;
       if (this.counter == 0) {
-        clearInterval(interval);
+        clearInterval(this.interval);
       }
     }, 1000);
   }
@@ -89,5 +108,22 @@ export class PrsComponent implements OnInit {
   yourRpsChoice = (choice) => {
     this.rpsService.emitRpsChoice(choice);
   }
+
+  openDialog = (dialogText) => {
+    let dialogRef = this.dialog.open(DialogContentComponent,{
+      width: '400px',
+      data: dialogText
+    });
+
+
+    /*
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog closed: ${result}`);
+      this.dialogResult = result;
+    })
+    */
+  }
+
+  show
 
 }

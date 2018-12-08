@@ -73,7 +73,42 @@ export class RpsService {
   getTimerReset = () => {
     let observable = new Observable(observer => {
       this.socket.on('timerReset', (data) => {
-        console.log(data);
+        observer.next(data);
+      });
+      return () => {
+        this.socket.disconnect();
+      };
+    })
+    return observable;
+  }
+
+  getTimerStop = () => {
+    let observable = new Observable(observer => {
+      this.socket.on('timerStop', (data) => {
+        observer.next(data);
+      });
+      return () => {
+        this.socket.disconnect();
+      };
+    })
+    return observable;
+  }
+
+  getWinner = () => {
+    let observable = new Observable(observer => {
+      this.socket.on('winnerDialog', (data) => {
+        observer.next(data);
+      });
+      return () => {
+        this.socket.disconnect();
+      };
+    })
+    return observable;
+  }
+
+  getDCMessage = () => {
+    let observable = new Observable(observer => {
+      this.socket.on('dcMessage', (data) => {
         observer.next(data);
       });
       return () => {

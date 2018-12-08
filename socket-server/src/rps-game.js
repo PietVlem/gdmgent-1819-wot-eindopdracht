@@ -1,5 +1,4 @@
 class RpsGame {
-
     constructor(p1, p2) {
         this.p1 = p1;
         this.p2 = p2;
@@ -36,6 +35,13 @@ class RpsGame {
         });
 
         this.runTimer();
+
+        this.p1.on('disconnect', () => {
+            this.onDisconnect(p2, 1)
+        });
+        this.p2.on('disconnect', () => {
+            this.onDisconnect(p1, 0)
+        });
     }
 
     getTime() {
@@ -45,11 +51,9 @@ class RpsGame {
 
     runTimer() {
         this.counter = this.maxCounterTime;
-        let interval = setInterval(() => {
-            console.log(this.counter);
+        this.interval = setInterval(() => {
             if(this.turns.includes(null)){
                 this.counter--;
-                console.log(this.counter);
                 if (this.counter == 0) {
                     let nullValues = this.getOccurrence(this.turns, null);
                     if(nullValues == 2){
@@ -64,17 +68,8 @@ class RpsGame {
                         }
                         this.updateScore();
                     }
-                    console.log(`nullValues: ${nullValues}`);
-                    if(this.scoreP1 == 2 || this.scoreP2 == 2){
-                        clearInterval(interval);
-                    }
-                    else{
-                        this.timerReset();
-                    }
-                    
+                    (this.scoreP1 == 2 || this.scoreP2 == 2) ? this.timerStop() : this.timerReset();
                 }
-            }else{
-                this.timerReset();
             }
         }, 1000);
     }
@@ -90,11 +85,23 @@ class RpsGame {
         });
     }
 
+    timerStop(){
+        clearInterval(this.interval);
+        this.players.forEach((player) =>{
+            player.emit('timerStop', true);
+        })
+    }
+
     sendToPlayer(playerIndex, msg) {
         this.players[playerIndex].emit('message', {
             'message': msg,
             'timestamp': this.getTime()
         });
+    }
+
+    onDisconnect(remainingPlayer, idx){
+        this.timerStop();
+        remainingPlayer.emit('dcMessage', `${this.nicknames[idx]} is de winnaar! Uw tegenstander is vertrokken.`);
     }
 
     sendToPlayers(msg) {
@@ -103,6 +110,12 @@ class RpsGame {
                 'message': msg,
                 'timestamp': this.getTime()
             });
+        });
+    }
+
+    showWinnerDialog(winner){
+        this.players.forEach((player) => {
+            player.emit('winnerDialog', winner);
         });
     }
 
@@ -123,14 +136,12 @@ class RpsGame {
         if (turns[0] && turns[1]) {
             this.sendToPlayers('Game over ' + turns.join(' : '));
             this.getGameResult();
-            this.timerReset();
             this.turns = [null, null];
             this.sendToPlayers('Volgende ronde!');
         }
     }
 
     getGameResult() {
-
         const p0 = this.decodeTurn(this.turns[0]);
         const p1 = this.decodeTurn(this.turns[1]);
 
@@ -155,7 +166,7 @@ class RpsGame {
 
     sendWinMessage(winner, loser) {
         winner.emit('message', {
-            'message': 'jij wint! ( +1 point )',
+            'message': 'jij wint! ( +1 punt )',
             'timestamp': this.getTime()
         });
         loser.emit('message', {
@@ -181,11 +192,16 @@ class RpsGame {
     }
 
     checkWinner() {
-        if (this.scoreP1 == 2) {
-            this.sendToPlayers('player 1 wint deze BO3!');
-        }
-        if (this.scoreP2 == 2) {
-            this.sendToPlayers('player 2 wint deze BO3');
+        if(this.scoreP1 == 2 || this.scoreP2 == 2){
+            this.timerStop();
+            if (this.scoreP1 == 2) {
+                this.showWinnerDialog(`${this.nicknames[0]} is the winner!`)
+            }
+            if (this.scoreP2 == 2) {
+                this.showWinnerDialog(`${this.nicknames[1]} is the winner!`)
+            }
+        }else{
+            this.timerReset();
         }
     }
 
@@ -206,7 +222,7 @@ class RpsGame {
             });
         })
     }
-
+    
 
 }
 
