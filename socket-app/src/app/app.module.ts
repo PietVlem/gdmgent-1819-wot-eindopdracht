@@ -14,7 +14,7 @@ import { DialogComponent } from './components/dialog/dialog.component';
 import { DialogContentComponent } from './components/dialog-content/dialog-content.component';
 
 
-const config: SocketIoConfig = { url: 'http://localhost:4444', options: {} };
+const config: SocketIoConfig = { url: 'http://localhost:4444/rps', options: {} };
 
 @NgModule({
   declarations: [

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
+import { initDomAdapter } from '@angular/platform-browser/src/browser';
 
 @Injectable({
   providedIn: 'root'
@@ -9,17 +10,16 @@ export class RpsService {
 
   constructor(private socket: Socket) { }
 
+  emitNickname = (nickname) => {
+    this.socket.emit('nickname', nickname);
+  }
+
   emitMessage = (message) => {
     this.socket.emit('sendMessage', message)
   }
 
   emitRpsChoice = (choice) => {
     this.socket.emit('turn', choice);
-  }
-
-  emitNickname = (nickname) => {
-    console.log(nickname);
-    this.socket.emit('nickname', nickname);
   }
 
   getMessages = () => {
@@ -97,18 +97,6 @@ export class RpsService {
   getWinner = () => {
     let observable = new Observable(observer => {
       this.socket.on('winnerDialog', (data) => {
-        observer.next(data);
-      });
-      return () => {
-        this.socket.disconnect();
-      };
-    })
-    return observable;
-  }
-
-  getDCMessage = () => {
-    let observable = new Observable(observer => {
-      this.socket.on('dcMessage', (data) => {
         observer.next(data);
       });
       return () => {

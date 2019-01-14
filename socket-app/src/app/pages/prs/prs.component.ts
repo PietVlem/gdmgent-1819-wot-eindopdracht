@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { RpsService } from 'src/app/services/rps.service';
-import { Observable, timer } from 'rxjs';
-import { take, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { DialogContentComponent } from '../../components/dialog-content/dialog-content.component';
@@ -16,6 +14,7 @@ export class PrsComponent implements OnInit {
   messages = [];
   scores = [];
   nicknames = [];
+  newMessage;
 
   counter;
   interval;
@@ -31,6 +30,10 @@ export class PrsComponent implements OnInit {
 
   ngOnInit() {
     let nicknamePlayer = localStorage.getItem('nickname');
+    if(!nicknamePlayer){
+      this.router.navigate(['/'])
+    }
+    this.newMessage = '';
     this.scores.push({
       'p1': null,
       'p2': null
@@ -40,7 +43,7 @@ export class PrsComponent implements OnInit {
       'p2': null
     })
     this.rpsService.getMessages().subscribe(message => {
-      this.messages.push(message);
+      this.messages.unshift(message);
     })
     this.rpsService.getScore().subscribe(score => {
       this.scores.push(score);
@@ -49,42 +52,42 @@ export class PrsComponent implements OnInit {
       this.nicknames.push(names);
     })
     this.rpsService.getConnectionStatus().subscribe(status => {
+      console.log(status);
       if (status) {
         this.rpsService.emitNickname(nicknamePlayer);
         this.runTimer();
       }
     })
     this.rpsService.getTimerReset().subscribe(TRbool => {
-      if(TRbool){
+      if (TRbool) {
         this.resetTimer();
       }
     })
     this.rpsService.getTimerStop().subscribe(TSbool => {
       console.log(TSbool);
-      if(TSbool){
+      if (TSbool) {
         this.stopTimer();
       }
     })
     this.rpsService.getWinner().subscribe(winner => {
       this.openDialog(winner);
     })
-    this.rpsService.getDCMessage().subscribe(DCMessage => {
-      this.openDialog(DCMessage);
-    })
   }
 
   resetTimer = () => {
+    clearInterval(this.interval);
     this.counter = 20;
+    this.runTimer();
   }
 
-  stopTimer = () =>{
+  stopTimer = () => {
     clearInterval(this.interval);
     this.counter = 0;
   }
 
   runTimer = () => {
     this.counter = 20;
-    this.interval = setInterval( () => {
+    this.interval = setInterval(() => {
       this.counter--;
       if (this.counter == 0) {
         clearInterval(this.interval);
@@ -96,13 +99,16 @@ export class PrsComponent implements OnInit {
     this.messages.push(val);
   }
 
-  sendMessage = (message) => {
-    let date = new Date();
-    let currentTime = `${date.getHours()}h ${date.getMinutes()}`;
-    this.rpsService.emitMessage({
-      'message': `${localStorage.getItem('nickname')} zegt: ${message.viewModel}`,
-      'timestamp': currentTime
-    });
+  sendMessage = () => {
+    if (this.newMessage != '') {
+      let date = new Date();
+      let currentTime = `${date.getHours()}h ${date.getMinutes()}`;
+      this.rpsService.emitMessage({
+        'message': `${localStorage.getItem('nickname')} zegt: ${this.newMessage}`,
+        'timestamp': currentTime
+      });
+      this.newMessage = '';
+    }
   }
 
   yourRpsChoice = (choice) => {
@@ -110,20 +116,16 @@ export class PrsComponent implements OnInit {
   }
 
   openDialog = (dialogText) => {
-    let dialogRef = this.dialog.open(DialogContentComponent,{
+    let dialogRef = this.dialog.open(DialogContentComponent, {
       width: '400px',
       data: dialogText
     });
-
-
-    /*
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog closed: ${result}`);
-      this.dialogResult = result;
-    })
-    */
   }
 
-  show
+  onKeydown(event) {
+    if (event.key === "Enter") {
+      this.sendMessage();
+    }
+  }
 
 }

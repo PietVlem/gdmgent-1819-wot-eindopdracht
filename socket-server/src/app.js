@@ -8,11 +8,6 @@ RPS - game class
 const rpsGame = require('./rps-game');
 
 /*
-RPS - game
-*/
-let waitingPlayer = null;
-
-/*
 Get Time
 */
 getTime = () => {
@@ -20,27 +15,43 @@ getTime = () => {
     return `${date.getHours()}h ${date.getMinutes()}`;
 }
 
-io.on('connection', socket => {
-    /*
-    RPS 
-    */
-    if (waitingPlayer) {
-        new rpsGame(waitingPlayer, socket);
-        waitingPlayer = null;
-    } else {
-        waitingPlayer = socket;
-        waitingPlayer.emit('message', {
-            'message' : 'Wachten op tegenstander ...',
-            'timestamp' : getTime()
+/*
+RPS - game
+*/
+vars = {
+    room: 1,
+    waitingPlayer: null
+}
+
+io.of('/rps').on('connection', socket => {
+
+    socket.emit('message', createMessage('connecting to room...'));
+    
+    if(vars.waitingPlayer){
+        vars.waitingPlayer.join(vars.room).emit('message', createMessage(`joined room ${vars.room}`));
+        socket.join(vars.room).emit('message', createMessage(`joined room ${vars.room}`));
+        new rpsGame(vars.waitingPlayer, socket, vars.room);
+        vars.room += 1;
+        vars.waitingPlayer = null;
+    }else{
+        vars.waitingPlayer = socket;
+        
+        vars.waitingPlayer.on('disconnect', function () {
+            console.log('socket disconnected ...');
+            vars.waitingPlayer = null;
         });
     }
-    socket.on('sendMessage', message => {
-        io.emit('message', message)
-    })
-    socket.on('disconnect', () => {
-        waitingPlayer = null;
-    })
+
+    
 });
+
+createMessage = (message) =>{
+    return {
+        'message' : message,
+        'timestamp' : getTime(),
+        'class': 'green'
+    }
+}
 
 http.listen(4444, () => {
     console.log('Listening on port 4444');

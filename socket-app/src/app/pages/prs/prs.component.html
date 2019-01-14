@@ -38,16 +38,16 @@
     <div class="grid">
       <div class="grid__item">
         <ul class="chatbox">
-          <li *ngFor="let message of messages">[ {{message.timestamp}} ] {{message.message}}</li>
+          <li class="{{message.class}}" *ngFor="let message of messages">[ {{message.timestamp}} ] {{message.message}}</li>
         </ul>
       </div>
     </div>
     <div class="grid">
       <div class="grid__item medium--three-quarters">
-        <input type="text" ngModel name="newMessage" #newMessage="ngModel">
+        <input type="text" [(ngModel)]="newMessage" (keydown)="onKeydown($event)">
       </div>
       <div class="grid__item medium--one-quarter">
-        <button class="button button--default button--full" (click)="sendMessage(newMessage)">Verzend</button>
+        <button class="button button--default button--full" (click)="sendMessage()">Verzend</button>
       </div>
     </div>
     <div class="grid grid--buttons">
