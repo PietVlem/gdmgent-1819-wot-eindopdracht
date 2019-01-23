@@ -2,10 +2,7 @@ class RpsGame {
     constructor(p1, p2, room) {
         this.p1 = p1;
         this.p2 = p2;
-
         this.room = room;
-
-        this.gameOver = false;
 
         this.scoreP1 = 0;
         this.scoreP2 = 0;
@@ -16,31 +13,54 @@ class RpsGame {
         this.players = [p1, p2];
         this.nicknames = [null, null];
         this.turns = [null, null];
+        this.gameOver = false;
 
         this.getNicknames();
         this.emitConnected();
         this.updateScore();
-
         this.playerMessage();
+        this.emitPlayerId();
         this.sendToPlayers('Tegenstander gevonden! (BO3 : Eerste die 2 punten heeft wint!)');
-        
 
         this.players.forEach((player, idx) => {
             player.on('turn', (turn) => {
                 this.onTurn(idx, turn);
             });
         });
-
         this.runTimer();
+        this.playerDisconnect();
+    }
+
+    /*
+    On disconnect
+    */
+    playerDisconnect() {
+        this.players.forEach((player, idx) => {
+            const self = this;
+            player.on('disconnect', function () {
+                if(!self.gameOver){
+                    idx == 1? self.showWinnerDialog(`${self.nicknames[0]} is de winnaar!`) : self.showWinnerDialog(`${self.nicknames[1]} is de winnaar!`);
+                    self.timerStop();
+                }
+            });
+        });
+    }
+
+    /*
+    Emit player id
+    */
+    emitPlayerId() {
+        this.p1.emit('playerId', 0);
+        this.p2.emit('playerId', 1);
     }
 
     /*
     Emit game found
     */
-    emitConnected(){
+    emitConnected() {
         this.players.forEach((player) => {
             player.emit('connectionSatus', true);
-        });  
+        });
     }
 
     /*
@@ -54,7 +74,7 @@ class RpsGame {
     /*
     Nickname update
     */
-    getNicknames(){
+    getNicknames() {
         this.players.forEach((player, idx) => {
             player.on('nickname', (nickname) => {
                 this.setNickname(idx, nickname);
@@ -76,7 +96,6 @@ class RpsGame {
         })
     }
 
-    
     /*
     Messaging players
     */
@@ -114,7 +133,7 @@ class RpsGame {
         this.checkWinner();
     }
 
-    playerMessage(){
+    playerMessage() {
         this.players.forEach((player, idx) => {
             player.on('sendMessage', message => {
                 this.players.forEach((player) => {
@@ -127,7 +146,6 @@ class RpsGame {
         });
     }
 
-
     /* 
     Timer functions
     */
@@ -138,6 +156,7 @@ class RpsGame {
                 this.counter--;
                 console.log(this.counter);
                 if (this.counter == 0) {
+                    this.emitTurn(this.turns);
                     let nullValues = this.getOccurrence(this.turns, null);
                     if (nullValues == 2) {
                         this.sendToPlayers('Gelijkspel!');
@@ -149,6 +168,7 @@ class RpsGame {
                             this.sendWinMessage(this.players[0], this.players[1]);
                             this.scoreP2 += 1;
                         }
+                        this.turns = [null, null];
                         this.updateScore();
                     }
                     this.checkWinner();
@@ -191,11 +211,18 @@ class RpsGame {
         const turns = this.turns;
 
         if (turns[0] && turns[1]) {
+            this.emitTurn(turns);
             this.sendToPlayers('Game over ' + turns.join(' : '));
             this.getGameResult();
             this.turns = [null, null];
             this.sendToPlayers('Volgende ronde!');
         }
+    }
+
+    emitTurn(turns) {
+        this.players.forEach((player) => {
+            player.emit('turn', turns);
+        });
     }
 
     getGameResult() {
@@ -207,13 +234,12 @@ class RpsGame {
         switch (distance) {
             case 0:
                 this.sendToPlayers('Gelijkspel!');
+                this.timerReset();
                 break;
-
             case 1:
                 this.scoreP1 += 1;
                 this.sendWinMessage(this.players[0], this.players[1]);
                 break;
-
             case 2:
                 this.scoreP2 += 1;
                 this.sendWinMessage(this.players[1], this.players[0]);
@@ -237,7 +263,8 @@ class RpsGame {
     checkWinner() {
         if (this.scoreP1 == 2 || this.scoreP2 == 2) {
             this.timerStop();
-            (this.scoreP1 == 2) ? this.showWinnerDialog(`${this.nicknames[0]} is the winnaar!`) : this.showWinnerDialog(`${this.nicknames[1]} is the winnaar!`)
+            this.emitTurn();
+            (this.scoreP1 == 2) ? this.showWinnerDialog(`${this.nicknames[0]} is de winnaar!`) : this.showWinnerDialog(`${this.nicknames[1]} is the winnaar!`);
             this.gameOver = true;
         } else {
             this.timerReset();

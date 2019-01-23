@@ -24,7 +24,6 @@ vars = {
 }
 
 io.of('/rps').on('connection', socket => {
-
     socket.emit('message', createMessage('connecting to room...'));
     
     if(vars.waitingPlayer){
@@ -37,12 +36,9 @@ io.of('/rps').on('connection', socket => {
         vars.waitingPlayer = socket;
         
         vars.waitingPlayer.on('disconnect', function () {
-            console.log('socket disconnected ...');
             vars.waitingPlayer = null;
         });
     }
-
-    
 });
 
 createMessage = (message) =>{

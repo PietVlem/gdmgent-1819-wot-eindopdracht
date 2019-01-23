@@ -46,10 +46,34 @@ export class RpsService {
     return observable;
   }
 
+  getPlayerId = () => {
+    let observable = new Observable(observer => {
+      this.socket.on('playerId', (id) => {
+        observer.next(id);
+      });
+      return () => {
+        this.socket.disconnect();
+      };
+    })
+    return observable;
+  }
+
   getNicknames = () => {
     let observable = new Observable(observer => {
       this.socket.on('nicknames', (data) => {
         observer.next(data);
+      });
+      return () => {
+        this.socket.disconnect();
+      };
+    })
+    return observable;
+  }
+
+  getLastTurn = () =>{
+    let observable = new Observable(observer => {
+      this.socket.on('turn', (turn) => {
+        observer.next(turn);
       });
       return () => {
         this.socket.disconnect();

@@ -3,7 +3,7 @@ import { RpsService } from 'src/app/services/rps.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { DialogContentComponent } from '../../components/dialog-content/dialog-content.component';
-import { faHandRock, faHandPaper, faHandScissors } from '@fortawesome/free-solid-svg-icons';
+import { faHandRock, faHandPaper, faHandScissors, faTimes, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-prs',
@@ -14,10 +14,29 @@ export class PrsComponent implements OnInit {
   messages = [];
   scores = [];
   nicknames = [];
+  lastTurn;
   newMessage;
+  playerId;
+  advId;
+  NewChoice = false;
 
+  // choice
+  paperIconShow = false;
+  rockIconShow = false;
+  scissorsIconShow = false;
+  OopsIconShow = false;
+  adv_paperIconShow = false;
+  adv_rockIconShow = false;
+  adv_scissorsIconShow = false;
+  adv_OopsIconShow = false;
+
+  // disbale buttons
+  btnChoiceDisabled = false;
+  
   counter;
   interval;
+  yourChoice;
+  advChoice;
 
   /*
   icons 
@@ -25,12 +44,15 @@ export class PrsComponent implements OnInit {
   faHandRock = faHandRock;
   faHandPaper = faHandPaper;
   faHandScissors = faHandScissors;
+  faTimes = faTimes;
+  faArrowLeft = faArrowLeft;
+  
 
   constructor(private rpsService: RpsService, private router: Router, public dialog: MatDialog) { }
 
   ngOnInit() {
     let nicknamePlayer = localStorage.getItem('nickname');
-    if(!nicknamePlayer){
+    if (!nicknamePlayer) {
       this.router.navigate(['/'])
     }
     this.newMessage = '';
@@ -58,6 +80,9 @@ export class PrsComponent implements OnInit {
         this.runTimer();
       }
     })
+    this.rpsService.getPlayerId().subscribe(id => {
+      this.playerId = id;
+    })
     this.rpsService.getTimerReset().subscribe(TRbool => {
       if (TRbool) {
         this.resetTimer();
@@ -70,17 +95,30 @@ export class PrsComponent implements OnInit {
       }
     })
     this.rpsService.getWinner().subscribe(winner => {
-      this.openDialog(winner);
+      setTimeout(() => {
+        this.openDialog(winner);
+      }, 2000);
+    })
+    this.rpsService.getLastTurn().subscribe(turn => {
+      console.log(turn);
+      this.lastTurn = turn;
     })
   }
 
+  goBack(){
+    this.router.navigate(['/']);
+  }
+
   resetTimer = () => {
+    this.showLastTurn();
     clearInterval(this.interval);
     this.counter = 20;
     this.runTimer();
   }
 
   stopTimer = () => {
+    this.showLastTurn();
+    this.btnChoiceDisabled = true;
     clearInterval(this.interval);
     this.counter = 0;
   }
@@ -113,13 +151,78 @@ export class PrsComponent implements OnInit {
 
   yourRpsChoice = (choice) => {
     this.rpsService.emitRpsChoice(choice);
+    this.clearIcons();
+    this.NewChoice = true;
+    switch (choice) {
+      case 'paper':
+        this.paperIconShow = true;
+        break;
+      case 'rock':
+        this.rockIconShow = true;
+        break;
+      case 'scissors':
+        this.scissorsIconShow = true;
+        break;
+    }
+  }
+
+  showLastTurn = () => {
+    let advId;
+    this.playerId == 0 ? advId = 1 : advId = 0;
+    let yourChoice = this.lastTurn[this.playerId];
+    let advChoice = this.lastTurn[advId];
+
+    switch(yourChoice){
+      case 'paper':
+        this.paperIconShow = true;
+        break;
+      case 'rock':
+        this.rockIconShow = true;
+        break;
+      case 'scissors':
+        this.scissorsIconShow = true;
+        break;
+      case null:
+        this.OopsIconShow = true;
+        break;
+    }
+
+    switch(advChoice){
+      case 'paper':
+        this.adv_paperIconShow = true;
+        break;
+      case 'rock':
+        this.adv_rockIconShow = true;
+        break;
+      case 'scissors':
+        this.adv_scissorsIconShow = true;
+        break;
+      case null:
+        this.adv_OopsIconShow = true;
+        break;
+    }
+    const self = this;
+    setTimeout(function () {
+     self.clearIcons();
+    }, 3000);
+  }
+
+  clearIcons = () => {
+    this.paperIconShow = false;
+    this.rockIconShow = false;
+    this.scissorsIconShow = false;
+    this.OopsIconShow = false;
+    this.adv_paperIconShow = false;
+    this.adv_rockIconShow = false;
+    this.adv_scissorsIconShow = false;
+    this.adv_OopsIconShow = false;
   }
 
   openDialog = (dialogText) => {
-    let dialogRef = this.dialog.open(DialogContentComponent, {
-      width: '400px',
-      data: dialogText
-    });
+      let dialogRef = this.dialog.open(DialogContentComponent, {
+        width: '400px',
+        data: dialogText
+      });
   }
 
   onKeydown(event) {
@@ -127,5 +230,4 @@ export class PrsComponent implements OnInit {
       this.sendMessage();
     }
   }
-
 }

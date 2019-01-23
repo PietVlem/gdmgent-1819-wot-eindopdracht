@@ -74,7 +74,6 @@ body {
 .container {
     background-color: $bgColor;
     position: relative;
-    max-width: 1480px;
     margin: 0 auto;
     padding: 0 20px;
 
@@ -194,8 +193,14 @@ Home
 /*
 RPS
 */
+.grid--back{
+    padding-top: 20px;
+    fa-icon{
+        margin-right: 15px;
+    }
+}
 .rps-wrapper{
-    max-width: 800px;
+    max-width: 1200px;
     margin: auto;
     min-height: calc(100vh - 20px);
 }
@@ -218,6 +223,7 @@ RPS
     background-color: $bgColorLight;
     border-radius: 0.25rem;
     padding: 1rem;
+    min-height: 72px;
 }
 .chatbox{
     background-color: $bgColorLight;
@@ -244,6 +250,28 @@ RPS
     font-weight: bold;
     padding: 10px 0 0 20px;
     font-size: 20px;
+}
+
+.choice{
+    background-color: #3b4148;
+    border-radius: 0.25rem;
+    padding: 1rem 20px;
+    margin-bottom: 20px;
+    height: 105px;
+    span{
+        display: none;
+    }
+    fa-icon{
+        color: white;
+        font-size: 30px;
+        margin-right: 15px;
+    }
+    &:last-child{
+        margin-bottom: 0;
+    }
+    p{
+        color: white;
+    }
 }
 
 /*

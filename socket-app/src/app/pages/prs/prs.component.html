@@ -1,4 +1,11 @@
 <div class="container clearfix">
+  <div class="grid grid--back">
+    <div class="grid__item medium--one-quarter">
+        <button (click)="goBack()" class="button button--default button--full">
+            <fa-icon class="ArrowLeft-icon" [icon]="faArrowLeft"></fa-icon>Terug
+        </button>
+    </div>
+  </div>
   <div class="rps-wrapper">
     <div class="head-game">
       <h1>Blad - Steen - Schaar</h1>
@@ -36,7 +43,27 @@
       </div>
     </div>
     <div class="grid">
-      <div class="grid__item">
+      <div class="grid__item medium--two-fifths">
+        <div class="choice">
+          <p>Uw keuze:</p>
+          <div class="your-choice">
+              <span [style.display]="paperIconShow ? 'block' : 'none'"><fa-icon  class="paper-icon" [icon]="faHandPaper"></fa-icon>Blad</span> 
+              <span [style.display]="rockIconShow ? 'block' : 'none'"><fa-icon  class="rock-icon" [icon]="faHandRock"></fa-icon>Steen</span> 
+              <span [style.display]="scissorsIconShow ? 'block' : 'none'"><fa-icon class="scissors-icon" [icon]="faHandScissors"></fa-icon>Schaar</span>
+              <span [style.display]="OopsIconShow ? 'block' : 'none'"><fa-icon class="times-icon" [icon]="faTimes"></fa-icon>Oops</span> 
+          </div>
+        </div>
+        <div class="choice">
+          <p>Keuze tegenstander:</p>
+          <div class="adv-choice">
+              <span [style.display]="adv_paperIconShow ? 'block' : 'none'"><fa-icon  class="paper-icon" [icon]="faHandPaper"></fa-icon>Blad</span> 
+              <span [style.display]="adv_rockIconShow ? 'block' : 'none'"><fa-icon  class="rock-icon" [icon]="faHandRock"></fa-icon>Steen</span> 
+              <span [style.display]="adv_scissorsIconShow ? 'block' : 'none'"><fa-icon class="scissors-icon" [icon]="faHandScissors"></fa-icon>Schaar</span>
+              <span [style.display]="adv_OopsIconShow ? 'block' : 'none'"><fa-icon class="times-icon" [icon]="faTimes"></fa-icon>Oops</span>  
+          </div>
+        </div>
+      </div>
+      <div class="grid__item medium--three-fifths">
         <ul class="chatbox">
           <li class="{{message.class}}" *ngFor="let message of messages">[ {{message.timestamp}} ] {{message.message}}</li>
         </ul>
@@ -52,17 +79,17 @@
     </div>
     <div class="grid grid--buttons">
       <div class="grid__item medium--one-third">
-        <button class="button button--default button--full" (click)="yourRpsChoice('paper')">
+        <button [disabled]="btnChoiceDisabled" class="button button--default button--full" (click)="yourRpsChoice('paper')">
           <fa-icon [icon]="faHandPaper"></fa-icon>Blad
         </button>
       </div>
       <div class="grid__item medium--one-third">
-        <button class="button button--default button--full" (click)="yourRpsChoice('rock')">
+        <button [disabled]="btnChoiceDisabled" class="button button--default button--full" (click)="yourRpsChoice('rock')">
           <fa-icon [icon]="faHandRock"></fa-icon>Steen
         </button>
       </div>
       <div class="grid__item medium--one-third">
-        <button class="button button--default button--full" (click)="yourRpsChoice('scissors')">
+        <button [disabled]="btnChoiceDisabled" class="button button--default button--full" (click)="yourRpsChoice('scissors')">
           <fa-icon [icon]="faHandScissors"></fa-icon>Schaar
         </button>
       </div>
