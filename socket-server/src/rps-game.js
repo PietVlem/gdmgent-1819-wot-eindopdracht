@@ -14,6 +14,7 @@ class RpsGame {
         this.nicknames = [null, null];
         this.turns = [null, null];
         this.gameOver = false;
+        this.noInputTuns = 0;
 
         this.getNicknames();
         this.emitConnected();
@@ -38,9 +39,10 @@ class RpsGame {
         this.players.forEach((player, idx) => {
             const self = this;
             player.on('disconnect', function () {
-                if(!self.gameOver){
-                    idx == 1? self.showWinnerDialog(`${self.nicknames[0]} is de winnaar!`) : self.showWinnerDialog(`${self.nicknames[1]} is de winnaar!`);
+                if (!self.gameOver) {
+                    idx == 1 ? self.showWinnerDialog(`${self.nicknames[0]} is de winnaar!`) : self.showWinnerDialog(`${self.nicknames[1]} is de winnaar!`);
                     self.timerStop();
+                    self.gameOver = true;
                 }
             });
         });
@@ -128,7 +130,6 @@ class RpsGame {
             'timestamp': this.getTime(),
             'class': 'green'
         });
-
         this.updateScore();
         this.checkWinner();
     }
@@ -160,6 +161,8 @@ class RpsGame {
                     let nullValues = this.getOccurrence(this.turns, null);
                     if (nullValues == 2) {
                         this.sendToPlayers('Gelijkspel!');
+                        this.noInputTuns += 1;
+                        this.checkNoInputTurns();
                     } else {
                         if (this.turns.indexOf(null) == 0) {
                             this.sendWinMessage(this.players[1], this.players[0]);
@@ -264,8 +267,7 @@ class RpsGame {
         if (this.scoreP1 == 2 || this.scoreP2 == 2) {
             this.timerStop();
             this.emitTurn();
-            (this.scoreP1 == 2) ? this.showWinnerDialog(`${this.nicknames[0]} is de winnaar!`) : this.showWinnerDialog(`${this.nicknames[1]} is the winnaar!`);
-            this.gameOver = true;
+            (this.scoreP1 == 2) ? this.showWinnerDialog(`${this.nicknames[0]} is de winnaar!`) : this.showWinnerDialog(`${this.nicknames[1]} is de winnaar!`);
         } else {
             this.timerReset();
         }
@@ -280,6 +282,21 @@ class RpsGame {
         })
     }
 
+    checkNoInputTurns() {
+        if (this.noInputTuns == 3) {
+            this.timerStop();
+            let message;
+            if (this.scoreP1 > this.scoreP2) {
+                message = `${this.nicknames[0]} is de winnaar!`
+            } else if (this.scoreP1 < this.scoreP2) {
+                message = `${this.nicknames[1]} is de winnaar!`
+            } else {
+                message = `Geen winnaar deze keer :(`
+            }
+            this.showWinnerDialog(message);
+        }
+    }
+
     /*
     Pop-ups
     */
@@ -287,7 +304,18 @@ class RpsGame {
         this.players.forEach((player) => {
             player.emit('winnerDialog', winner);
         });
+        this.gameOver = true;
+        this.dcUsers();
     }
+
+    /*
+    Disconnect users
+    */
+    dcUsers() {
+        this.p1.disconnect();
+        this.p2.disconnect();
+    }
+
 }
 
 module.exports = RpsGame;
